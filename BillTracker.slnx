@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="BillTracker.Core/BillTracker.Core.csproj" />
+  <Project Path="BillTracker.Tests/BillTracker.Tests.csproj" />
+  <Project Path="BillTracker.Web/BillTracker.Web.csproj" />
+</Solution>
