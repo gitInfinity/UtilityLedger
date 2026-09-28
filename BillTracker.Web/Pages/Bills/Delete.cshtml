@@ -1,0 +1,26 @@
+@page "{id:int}"
+@model BillTracker.Web.Pages.Bills.DeleteModel
+@{
+    ViewData["Title"] = "Delete bill";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">UTILITY LEDGER <span>/</span> REMOVE RECORD</p>
+        <h1>Delete this bill?</h1>
+        <p class="heading-copy">This action cannot be undone.</p>
+    </div>
+</section>
+
+@if (Model.Bill is not null)
+{
+    <section class="delete-summary" aria-label="Bill to delete">
+        <div><span>UTILITY</span><strong>@Model.Bill.Category</strong></div>
+        <div><span>BILLING MONTH</span><strong>@Model.Bill.BillingMonth</strong></div>
+        <div><span>AMOUNT</span><strong>@Model.Bill.Amount.ToString("N2")</strong></div>
+    </section>
+    <form method="post" class="form-actions">
+        <button class="button button-danger" type="submit">Delete bill</button>
+        <a class="text-link" asp-page="Index">Keep this bill</a>
+    </form>
+}

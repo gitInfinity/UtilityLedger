@@ -47,6 +47,21 @@ public class SpikeDetectorTests
     }
 
     [Fact]
+    public void Analyze_WhenPreviousAverageIsZero_FlagsPositiveAmountWithoutPercentage()
+    {
+        var detector = new SpikeDetector(new SpikeDetectionOptions());
+        var bill = CreateBill(UtilityCategory.Water, 1m, 2025, 5);
+        var history = new[] { CreateBill(UtilityCategory.Water, 0m, 2025, 4) };
+
+        var result = detector.Analyze(bill, history);
+
+        Assert.True(result.IsFlagged);
+        Assert.Equal(0m, result.Average);
+        Assert.Null(result.PercentAboveAverage);
+        Assert.Contains("percentage comparison is unavailable", result.Message);
+    }
+
+    [Fact]
     public void Analyze_WhenThereAreGaps_UsesOnlyBillsInsideCalendarLookback()
     {
         var detector = new SpikeDetector(new SpikeDetectionOptions { LookbackMonths = 3 });

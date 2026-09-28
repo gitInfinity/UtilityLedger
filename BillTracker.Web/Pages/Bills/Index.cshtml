@@ -1,0 +1,59 @@
+@page
+@model BillTracker.Web.Pages.Bills.IndexModel
+@{
+    ViewData["Title"] = "All bills";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">UTILITY LEDGER <span>/</span> HISTORY</p>
+        <h1>All bills</h1>
+        <p class="heading-copy">Your complete record of household utility costs.</p>
+    </div>
+    <a class="button button-primary" asp-page="Create"><span aria-hidden="true">+</span> Add a bill</a>
+</section>
+
+<section class="data-section" aria-label="Bill history">
+    @if (Model.Bills.Count == 0)
+    {
+        <div class="empty-state">
+            <span class="empty-mark" aria-hidden="true">01</span>
+            <div>
+                <h3>No bills recorded yet.</h3>
+                <p>Add your first bill to start building a monthly history.</p>
+            </div>
+            <a class="button button-secondary" asp-page="Create">Add a bill</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-scroll">
+            <table class="bill-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Utility</th>
+                        <th scope="col">Billing month</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Notes</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var bill in Model.Bills)
+                    {
+                        <tr>
+                            <td><span class="category-name"><span class="category-dot" aria-hidden="true"></span>@bill.Category</span></td>
+                            <td class="bill-month">@bill.BillingMonth</td>
+                            <td class="bill-amount">@bill.Amount.ToString("N2")</td>
+                            <td class="bill-notes">@(string.IsNullOrWhiteSpace(bill.Notes) ? "None" : bill.Notes)</td>
+                            <td class="row-actions row-actions-group">
+                                <a asp-page="Edit" asp-route-id="@bill.Id">Edit</a>
+                                <a asp-page="Delete" asp-route-id="@bill.Id">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

@@ -1,0 +1,57 @@
+@page "{id:int}"
+@model BillTracker.Web.Pages.Bills.EditModel
+@{
+    ViewData["Title"] = "Edit bill";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">UTILITY LEDGER <span>/</span> UPDATE RECORD</p>
+        <h1>Edit a bill</h1>
+        <p class="heading-copy">Update the details saved for this utility month.</p>
+    </div>
+</section>
+
+<form method="post" class="bill-form">
+    <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
+    <div class="form-grid">
+        <div class="field-group">
+            <label asp-for="Input.Category"></label>
+            <select asp-for="Input.Category" asp-items="Html.GetEnumSelectList<UtilityCategory>()"></select>
+            <span asp-validation-for="Input.Category" class="field-error"></span>
+        </div>
+        <div class="field-group">
+            <label asp-for="Input.Amount"></label>
+            <input asp-for="Input.Amount" inputmode="decimal" step="0.01" />
+            <span asp-validation-for="Input.Amount" class="field-error"></span>
+        </div>
+        <div class="field-group">
+            <label asp-for="Input.Year"></label>
+            <input asp-for="Input.Year" type="number" min="1" max="9999" />
+            <span asp-validation-for="Input.Year" class="field-error"></span>
+        </div>
+        <div class="field-group">
+            <label asp-for="Input.Month"></label>
+            <select asp-for="Input.Month">
+                @for (var month = 1; month <= 12; month++)
+                {
+                    <option value="@month">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</option>
+                }
+            </select>
+            <span asp-validation-for="Input.Month" class="field-error"></span>
+        </div>
+        <div class="field-group field-wide">
+            <label asp-for="Input.Notes">Notes <span class="optional-label">Optional</span></label>
+            <textarea asp-for="Input.Notes" rows="3" maxlength="500"></textarea>
+            <span asp-validation-for="Input.Notes" class="field-error"></span>
+        </div>
+    </div>
+    <div class="form-actions">
+        <button class="button button-primary" type="submit">Save changes</button>
+        <a class="text-link" asp-page="Index">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

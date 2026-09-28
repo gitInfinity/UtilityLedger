@@ -1,10 +1,107 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Overview";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="page-heading dashboard-heading">
+    <div>
+        <p class="eyebrow">UTILITY LEDGER <span>/</span> OVERVIEW</p>
+        <h1>Your monthly bills,<br />without the surprises.</h1>
+        <p class="heading-copy">Track household utilities and spot unusual changes before they become a pattern.</p>
+    </div>
+    <a class="button button-primary" asp-page="/Bills/Create"><span aria-hidden="true">+</span> Add a bill</a>
+</section>
+
+<section class="summary-strip" aria-label="Current month summary">
+    <div class="summary-item">
+        <span class="summary-label">THIS MONTH</span>
+        <strong>@Model.CurrentMonthTotal.ToString("N2")</strong>
+        <span class="summary-detail">total recorded</span>
+    </div>
+    <div class="summary-item">
+        <span class="summary-label">BILLS LOGGED</span>
+        <strong>@Model.CurrentMonthBillCount</strong>
+        <span class="summary-detail">for @DateTime.Today.ToString("MMMM yyyy")</span>
+    </div>
+    <div class="summary-item summary-alert">
+        <span class="summary-label">SPIKES TO REVIEW</span>
+        <strong>@Model.FlaggedRecentCount</strong>
+        <span class="summary-detail">in your recent bills</span>
+    </div>
+</section>
+
+<section class="data-section" aria-labelledby="recent-bills-heading">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">ACTIVITY</p>
+            <h2 id="recent-bills-heading">Recent bills</h2>
+        </div>
+        <a class="text-link" asp-page="/Bills/Index">View all bills <span aria-hidden="true">&rarr;</span></a>
+    </div>
+
+    @if (Model.RecentBills.Count == 0)
+    {
+        <div class="empty-state">
+            <span class="empty-mark" aria-hidden="true">01</span>
+            <div>
+                <h3>Your first bill starts a baseline.</h3>
+                <p>Add a utility bill to begin tracking month-to-month changes.</p>
+            </div>
+            <a class="button button-secondary" asp-page="/Bills/Create">Add your first bill</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-scroll">
+            <table class="bill-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Utility</th>
+                        <th scope="col">Billing month</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Spike check</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.RecentBills)
+                    {
+                        <tr class="@(row.Detection.IsFlagged ? "bill-row-flagged" : null)">
+                            <td>
+                                <span class="category-name"><span class="category-dot" aria-hidden="true"></span>@row.Bill.Category</span>
+                            </td>
+                            <td class="bill-month">@row.Bill.BillingMonth</td>
+                            <td class="bill-amount">@row.Bill.Amount.ToString("N2")</td>
+                            <td>
+                                @if (row.Detection.IsFlagged)
+                                {
+                                    <span class="spike-label">Spike</span>
+                                    @if (row.Detection.PercentAboveAverage is decimal percentAboveAverage)
+                                    {
+                                        <span class="spike-detail">@percentAboveAverage.ToString("0.##")% above average</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="spike-detail">Above zero baseline</span>
+                                    }
+                                }
+                                else if (row.Detection.Average is null)
+                                {
+                                    <span class="baseline-label">Not enough data</span>
+                                }
+                                else
+                                {
+                                    <span class="normal-label">Within range</span>
+                                }
+                            </td>
+                            <td class="row-actions">
+                                <a asp-page="/Bills/Edit" asp-route-id="@row.Bill.Id" aria-label="Edit @row.Bill.Category bill for @row.Bill.BillingMonth">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
